@@ -1,5 +1,6 @@
 """简单节拍分析：谱通量 → 自相关求 BPM → 网格对齐求拍点和强拍。用于把重击、剪点卡在鼓点上。
-用法：python3 beats.py 音乐文件 [起 止]
+用法：python3 beats.py 音乐文件 [起 时长]
+输出 BPM、强拍、每 0.5 秒响度（带真实时间标签）和空拍后的重击起音。
 """
 import subprocess, sys, json
 import numpy as np
@@ -39,11 +40,34 @@ def analyze(path, ss=0, t=None):
     energy = [flux[bi[k::4]].sum() for k in range(4)]
     down = beats[int(np.argmax(energy))::4]
     # 响度包络（每 0.5 秒）
-    seg = int(fps / 2); env = [float(20 * np.log10(rms[i:i + seg].mean() + 1e-9)) for i in range(0, len(rms), seg)]
-    return {'bpm': round(60 / period, 2), 'beats': [round(ss + b, 3) for b in beats], 'down': [round(ss + b, 3) for b in down], 'env_db_half_s': [round(e, 1) for e in env]}
+    # 响度包络：按真实时间每 0.5 秒取一格（旧版按整数帧数分格，每格只有 0.4876 秒，标签越往后越偏，48 秒处偏 1.2 秒）
+    env = []
+    for k in range(int(len(rms) / fps / .5)):
+        a, b = int(round(k * .5 * fps)), int(round((k + 1) * .5 * fps))
+        env.append((round(ss + k * .5, 2), round(float(20 * np.log10(rms[a:b].mean() + 1e-9)), 1)))
+    return {'bpm': round(60 / period, 2), 'beats': [round(ss + b, 3) for b in beats], 'down': [round(ss + b, 3) for b in down], 'env_db_half_s': env}
+
+
+def onsets(path, ss, t, quiet=-35, loud=-15):
+    """精确找「空拍后的重击」：逐 25ms 测响度，找持续 >0.12s 低于 quiet 的空拍，返回 (空拍起, 空拍止, 重击起音)。卡鼓点用这个，不要用 0.5 秒的响度表。"""
+    x = load(path, ss, t); h = int(.025 * SR)
+    db = 20 * np.log10(np.array([np.sqrt((x[i * h:(i + 1) * h] ** 2).mean()) for i in range(len(x) // h)]) + 1e-9)
+    out, i = [], 0
+    while i < len(db):
+        if db[i] < quiet:
+            j = i
+            while j < len(db) and db[j] < quiet: j += 1
+            if (j - i) * .025 >= .12:
+                k = j
+                while k < len(db) and db[k] < loud: k += 1
+                out.append((round(ss + i * .025, 3), round(ss + j * .025, 3), round(ss + k * .025, 3)))
+            i = j
+        else: i += 1
+    return out
 
 
 if __name__ == '__main__':
     r = analyze(sys.argv[1], *(float(a) for a in sys.argv[2:4]))
     print('BPM', r['bpm']); print('downbeats', r['down'][:40])
-    print('env', r['env_db_half_s'][:120])
+    print('env', ' '.join(f'{t}:{d}' for t, d in r['env_db_half_s'][:240]))
+    print('breaks (空拍起, 止, 重击起音)', onsets(sys.argv[1], *(float(a) for a in sys.argv[2:4])) if len(sys.argv) > 3 else onsets(sys.argv[1], 0, 600))
