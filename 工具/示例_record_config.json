@@ -335,7 +335,14 @@
   "h": 810,
   "fps": 24,
   "pre": 5.0,
-  "dur": 16
+  "dur": 16,
+  "actions": [
+   {
+    "t": 0.05,
+    "type": "js",
+    "code": "(()=>{const g=document.getElementById('gauge-canvas'); if(g){g.style.opacity='0';}})()"
+   }
+  ]
  },
  "coast_gpt": {
   "file": "GPT-6.1 Sol/04-海岸模拟.html",
