@@ -1,0 +1,356 @@
+{
+ "tower_ds": {
+  "file": "DeepSeek V4.1-flash 1017/02-雷峰塔_夕照.html",
+  "pre": 1.5,
+  "dur": 16,
+  "orbit": {
+   "el": 10,
+   "omega": 6,
+   "az0": 0,
+   "fov": 35,
+   "target": [
+    0,
+    46,
+    0
+   ],
+   "r": 155
+  },
+  "cam": "window.__leifeng && window.__leifeng.camera",
+  "w": 540,
+  "h": 810
+ },
+ "tower_gpt": {
+  "file": "GPT-6.1 Sol/02-雷峰塔-3D.html",
+  "pre": 1.0,
+  "dur": 16,
+  "orbit": {
+   "el": 10,
+   "omega": 6,
+   "az0": 0,
+   "fov": 35,
+   "target": [
+    0,
+    14.5,
+    0
+   ],
+   "r": 98
+  },
+  "w": 540,
+  "h": 810
+ },
+ "tower_op": {
+  "file": "Claude Opus5.5/02-雷峰塔.html",
+  "pre": 1.5,
+  "dur": 16,
+  "orbit": {
+   "el": 10,
+   "omega": 6,
+   "az0": 0,
+   "fov": 35,
+   "target": [
+    0,
+    37,
+    0
+   ],
+   "r": 178
+  },
+  "w": 540,
+  "h": 810
+ },
+ "store_ds": {
+  "file": "DeepSeek V4.1-flash 1017/03-雨夜便利店.html",
+  "pre": 0.1,
+  "dur": 24,
+  "cam": "window.__mart && window.__mart.camera",
+  "w": 540,
+  "h": 810,
+  "still_gap": 10,
+  "orbit": {
+   "el": 26,
+   "omega": 6,
+   "az0": 35,
+   "fov": 30,
+   "target": [
+    0,
+    1.5,
+    0
+   ],
+   "r": 78
+  }
+ },
+ "store_gpt": {
+  "file": "GPT-6.1 Sol/03-雨宿り-雨夜便利店.html",
+  "pre": 0.1,
+  "dur": 24,
+  "cam": "window.__diorama && window.__diorama.camera",
+  "w": 540,
+  "h": 810,
+  "still_gap": 10,
+  "orbit": {
+   "el": 26,
+   "omega": 6,
+   "az0": 35,
+   "fov": 30,
+   "target": [
+    0,
+    1.5,
+    0
+   ],
+   "r": 28
+  }
+ },
+ "store_op": {
+  "file": "Claude Opus5.5/03-雨夜コンビニ街角.html",
+  "pre": 0.1,
+  "dur": 24,
+  "w": 540,
+  "h": 810,
+  "still_gap": 10,
+  "orbit": {
+   "el": 26,
+   "omega": 6,
+   "az0": 35,
+   "fov": 30,
+   "target": [
+    0,
+    3,
+    0
+   ],
+   "r": 78
+  }
+ },
+ "game_ds": {
+  "file": "DeepSeek V4.1-flash 1017/05-NEON_OVERDRIVE.html",
+  "w": 1280,
+  "h": 720,
+  "fps": 24,
+  "pre": 6.5,
+  "dur": 10.0,
+  "actions": [
+   {
+    "t": 1.5,
+    "type": "press",
+    "key": "Enter"
+   },
+   {
+    "t": 4.6,
+    "type": "keydown",
+    "key": "ArrowUp"
+   },
+   {
+    "t": 6.1,
+    "type": "keydown",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 6.8,
+    "type": "keyup",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 7.8,
+    "type": "keydown",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 8.5,
+    "type": "keyup",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 9.6,
+    "type": "keydown",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 10.1,
+    "type": "keyup",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 11.2,
+    "type": "keydown",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 11.799999999999999,
+    "type": "keyup",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 13.0,
+    "type": "keydown",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 13.6,
+    "type": "keyup",
+    "key": "ArrowLeft"
+   }
+  ]
+ },
+ "game_gpt": {
+  "file": "GPT-6.1 Sol/05-NEON_OVERDRIVE.html",
+  "w": 1280,
+  "h": 720,
+  "fps": 24,
+  "pre": 6.5,
+  "dur": 10.0,
+  "actions": [
+   {
+    "t": 1.5,
+    "type": "press",
+    "key": "Enter"
+   },
+   {
+    "t": 4.6,
+    "type": "keydown",
+    "key": "ArrowUp"
+   },
+   {
+    "t": 6.1,
+    "type": "keydown",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 6.8,
+    "type": "keyup",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 7.8,
+    "type": "keydown",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 8.5,
+    "type": "keyup",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 9.6,
+    "type": "keydown",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 10.1,
+    "type": "keyup",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 11.2,
+    "type": "keydown",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 11.799999999999999,
+    "type": "keyup",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 13.0,
+    "type": "keydown",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 13.6,
+    "type": "keyup",
+    "key": "ArrowLeft"
+   }
+  ]
+ },
+ "game_op": {
+  "file": "Claude Opus5.5/05-NEON_OVERDRIVE.html",
+  "w": 1280,
+  "h": 720,
+  "fps": 24,
+  "pre": 6.5,
+  "dur": 10.0,
+  "actions": [
+   {
+    "t": 1.5,
+    "type": "press",
+    "key": "Enter"
+   },
+   {
+    "t": 4.6,
+    "type": "keydown",
+    "key": "ArrowUp"
+   },
+   {
+    "t": 6.1,
+    "type": "keydown",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 6.8,
+    "type": "keyup",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 7.8,
+    "type": "keydown",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 8.5,
+    "type": "keyup",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 9.6,
+    "type": "keydown",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 10.1,
+    "type": "keyup",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 11.2,
+    "type": "keydown",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 11.799999999999999,
+    "type": "keyup",
+    "key": "ArrowRight"
+   },
+   {
+    "t": 13.0,
+    "type": "keydown",
+    "key": "ArrowLeft"
+   },
+   {
+    "t": 13.6,
+    "type": "keyup",
+    "key": "ArrowLeft"
+   }
+  ]
+ },
+ "coast_ds": {
+  "file": "DeepSeek V4.1-flash 1017/04-海岸实时模拟.html",
+  "w": 540,
+  "h": 810,
+  "fps": 24,
+  "pre": 5.0,
+  "dur": 16
+ },
+ "coast_gpt": {
+  "file": "GPT-6.1 Sol/04-海岸模拟.html",
+  "w": 540,
+  "h": 810,
+  "fps": 24,
+  "pre": 2.0,
+  "dur": 16
+ },
+ "coast_op": {
+  "file": "Claude Opus5.5/04-实时海岸.html",
+  "w": 540,
+  "h": 810,
+  "fps": 24,
+  "pre": 2.0,
+  "dur": 16
+ }
+}
