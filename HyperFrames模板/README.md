@@ -8,15 +8,20 @@
 
 阿亮：「可以先不渲染吗，我的需求往往是先看 HTML 呈现，没问题我再输出成片」。
 
-1. 写好片段（HTML + GSAP）后**不渲染**，用 `hf_preview.py` 生成带播放控件的预览页（播放 / 暂停、拖进度、循环），发布成网页给阿亮看。
+1. 写好片段（HTML + GSAP）后**不渲染**，用 `hf_preview.py` 生成预览页，发布成网页给阿亮看。**播放器用之前的工作台播放器 1.0**（阿亮 2026-10-23：「播放器继续使用之前的呢」）：和整片预览同一套界面，分段进度条、▶ 播放、逐帧、倍速、跳到镜头、逐字稿栏、全屏。
 2. 阿亮提修改 → 改 HTML → 重新生成预览页、更新同一个链接。
 3. 阿亮说没问题、要出成片时，才运行 `npx hyperframes render`。
 
 ```bash
-python3 HyperFrames模板/hf_preview.py 片段目录 预览输出目录 "片段名"   # 生成可播放的 HTML 预览（不渲染）
+python3 HyperFrames模板/hf_preview.py 片段目录 预览输出目录 "片段名" --player 当期视频仓库/剪辑工程   # 生成 HTML 预览（不渲染）
 ```
 
-预览页按每个 `.clip` 的 `data-start` / `data-duration` 显示、隐藏，视频音频跟着时间走，和渲染器的逻辑一致；画面按窗口等比缩放，手机上也能看。
+- 播放器文件（`engine.js`、`player.js`、`player-ui.js`、`style.css`）从 `--player` 指定的剪辑工程里原样复制，不改（`player-lock.json` 锁定的 1.0 版）；也可以用环境变量 `HF_PLAYER`。
+- 片段原样放进 `预览输出目录/clip/`，由 [hf-adapter.js](hf-adapter.js) 用 iframe 叠在播放器画布上：播放器时钟走到哪，就把 GSAP 时间线 seek 到哪，按 `.clip` 的 `data-start` / `data-duration` 显示、隐藏，视频跟着对齐（和渲染器的逻辑一致）。
+- 声音：片段里 `<audio>` / `<video>` 的声音按 `data-start`、`data-volume` 混成 `mix.mp3` 当播放器音轨；没有声音就是同样长的静音轨。
+- 进度条分段：片段目录放 `shots.json`（`[{"start":0,"end":0.7,"name":"圆圈叉画出"}, ...]`），或给根节点下的 `.clip` 加 `data-label`；都没有就整段算一镜。分段号 = 镜头序号，阿亮按这个号提修改。
+- 逐字稿栏：片段目录放 `captions.json`（`[[开始, 结束, "台词"], ...]`），没有就空着。
+- 发布成网页时：`index.html` 是页面，其余文件（`clip/` 整个目录、播放器文件、`hf-*.js`、`mix.mp3`）作为附带文件一起发。
 
 ## 在云端环境开工（已实测，hyperframes 0.8.186）
 
