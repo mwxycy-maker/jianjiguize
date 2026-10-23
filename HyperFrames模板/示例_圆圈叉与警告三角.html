@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="gsap.min.js"></script>  <!-- 用 hf_env.sh 下到本地，渲染不依赖网络 -->
+    <style>
+      :root { --ground: #e9ecf1; --warn: #fb6547; --ink: #2b2f36; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 100%; height: 100%; }
+      .sticker { position: absolute; filter: drop-shadow(0 14px 22px rgba(0,0,0,.28)); }
+      #warn { left: 1180px; top: 380px; width: 300px; height: 280px; transform-origin: 50% 70%; }
+      #cx { left: 440px; top: 380px; width: 300px; height: 300px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="2.5" data-width="1920" data-height="1080">
+      <!-- 线框圆圈叉：圆环一笔画出，叉两笔画出 -->
+      <svg id="cx" class="sticker clip" data-start="0" data-duration="2.5" data-track-index="0" viewBox="0 0 300 300">
+        <circle cx="150" cy="150" r="142" fill="#fff"/>
+        <circle id="ring" cx="150" cy="150" r="112" fill="none" stroke="#fb6547" stroke-width="20" stroke-linecap="round" transform="rotate(-90 150 150)"/>
+        <path id="x1" d="M105 105 L195 195" fill="none" stroke="#fb6547" stroke-width="20" stroke-linecap="round"/>
+        <path id="x2" d="M195 105 L105 195" fill="none" stroke="#fb6547" stroke-width="20" stroke-linecap="round"/>
+      </svg>
+      <!-- 警告三角：落下弹一下，再摇两下 -->
+      <svg id="warn" class="sticker clip" data-start="0" data-duration="2.5" data-track-index="1" viewBox="0 0 300 280">
+        <path d="M150 22 L282 258 L18 258 Z" fill="#fb6547" stroke="#fff" stroke-width="26" stroke-linejoin="round" paint-order="stroke"/>
+        <rect x="136" y="92" width="28" height="104" rx="13" fill="#fff"/>
+        <circle cx="150" cy="226" r="17" fill="#fff"/>
+      </svg>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const ring = document.getElementById('ring'), L = 2 * Math.PI * 112;
+      gsap.set(ring, { strokeDasharray: L, strokeDashoffset: L });
+      gsap.set(['#x1', '#x2'], { strokeDasharray: 128, strokeDashoffset: 128 });
+      tl.fromTo('#cx', { scale: .4, opacity: 0 }, { scale: 1, opacity: 1, duration: .35, ease: 'back.out(2.2)' }, .2)
+        .to(ring, { strokeDashoffset: 0, duration: .35, ease: 'power3.out' }, .25)
+        .to('#x1', { strokeDashoffset: 0, duration: .2, ease: 'power2.out' }, .55)
+        .to('#x2', { strokeDashoffset: 0, duration: .2, ease: 'power2.out' }, .7)
+        .fromTo('#warn', { y: -90, scale: .5, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: .4, ease: 'back.out(2.2)' }, .3)
+        .to('#warn', { keyframes: { rotation: [0, 9, -7, 5, -3, 0] }, duration: 1.0, ease: 'none' }, .7);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
