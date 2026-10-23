@@ -19,6 +19,7 @@
 | [timeline.py](timeline.py) | 压缩 >0.5 秒停顿、插入停留、校对稿对齐出字幕；提供 `A(句, 词)` 事件锚点 | 被 plan.py 引用；需要本期的 `lines.py` |
 | [beats.py](beats.py) | 歌曲 BPM、强拍、每 0.5 秒响度，用来卡鼓点 | `python3 beats.py 歌.mp3 起 止` |
 | [示例_cues.py](示例_cues.py) | 那期完整的配乐表 + 音效表，照着写本期的 `cues.py` | 参考 |
+| [示例_plan.py](示例_plan.py) | 那期的分镜表：镜头切点、事件锚点（`A(句, 词)`）、素材表、数据水印 | 参考 |
 | [mix.py](mix.py) | 混音：人声 -16、音乐闪避、混响收尾、音效、整片 -14 LUFS | `python3 mix.py` |
 | [openverse.py](openverse.py) | 在 Openverse（Freesound）搜音效、下载、登记来源 | `python3 openverse.py search whoosh` / `get 编号 文件名` |
 | [record_html.py](record_html.py) | 把模型生成的 three.js 网页按统一机位逐帧录成视频 | `python3 record_html.py 名字1,名字2 [--probe]` |
@@ -27,7 +28,7 @@
 | [make_fonts.py](make_fonts.py) | 按本期用到的字做字体子集 | `python3 make_fonts.py` |
 | [stills.py](stills.py) | 打开网页预览，按时间截几张静帧拼成一张图，自查用 | `python3 stills.py 输出.jpg 12.5 30 61.2 --cols 3` |
 | [proxies.py](proxies.py) | 给无头 Chromium 做 VP8/Opus 审片代理 | `python3 proxies.py` |
-| [preview_build.py](preview_build.py) | 截取前 N 秒打包成独立网页预览，发给阿亮 | `python3 preview_build.py 输出目录 秒数 标题` |
+| [preview_build.py](preview_build.py) | 截取前 N 秒打包成独立网页预览，发给阿亮；大于 4MB 的视频自动重压（发布单文件 15MB、单次 64MB 上限），结果缓存 | `python3 preview_build.py 输出目录 秒数 标题` |
 
 ## 依赖
 

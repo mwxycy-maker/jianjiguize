@@ -19,10 +19,11 @@ function keyed(t, keys, dur = .6) {
   return cur;
 }
 // 放大到素材某处：z 倍，焦点 (fx, fy)
-function fillZoom(key, ts, z = 1, fx = .5, fy = .5, filter = '') {
+function fillZoom(key, ts, z = 1, fx = .5, fy = .5, filter = '', rate = 1) {
   return (g, x, y, w, h) => {
     if (!(key in window.VSRC)) { g.fillStyle = '#1b1f29'; g.fillRect(x, y, w, h); return; }   // 素材还在录制
-    const v = E.video(key, ts); if (!E.ready(v)) { g.fillStyle = '#1b1f29'; g.fillRect(x, y, w, h); return; }
+    // rate 必须等于 ts 的推进速度：否则网页播放时视频按 1 倍速跑、被反复拉回，画面来回抽搐
+    const v = E.video(key, ts, rate); if (!E.ready(v)) { g.fillStyle = '#1b1f29'; g.fillRect(x, y, w, h); return; }
     const [vw, vh] = E.sizeOf(v); const cw = vw / z, ch = vh / z;
     const cx = clamp(fx * vw - cw / 2, 0, vw - cw), cy = clamp(fy * vh - ch / 2, 0, vh - ch);
     if (filter) { g.save(); g.filter = filter; }
@@ -52,7 +53,7 @@ function triPanels(ctx, t, o) {
     if (!M) return;
     const ui = seg(t, a + .3, a + .8), uo = o.aOut == null ? 0 : seg(t, o.aOut, o.aOut + .4);
     const [bx, by] = E.mapPt(M, 62, 62);
-    badge(g, m, bx, by, 40 * s, clamp(ui * 2, 0, 1) * (1 - uo) * alpha, {side: 'right', nameSize: 30, s: 1});
+    badge(g, m, bx, by, 40 * s, clamp(ui * 2, 0, 1) * (1 - uo) * alpha, {side: 'right', nameSize: 26, s: 1});
     if (o.extra) o.extra(g, i, M, s);
   };
   if (F.k > 0) {
@@ -79,7 +80,7 @@ function towerContent(i, t) {
   let z = {z: 1, fx: .5, fy: .5};
   if (m === 'gpt') z = keyed(t, [[0, {z: 1, fx: .5, fy: .5}], [EV.gpt_detail, {z: 1.7, fx: .5, fy: .42}], [EV.gpt_back - .2, {z: 1, fx: .5, fy: .5}]], .7);
   if (m === 'ds') z = keyed(t, [[0, {z: 1, fx: .5, fy: .5}], [EV.water, {z: 1.9, fx: .16, fy: .6}], [EV.fog, {z: 1.7, fx: .8, fy: .46}], [EV.mount, {z: 1.9, fx: .82, fy: .34}], [EV.whole, {z: 1, fx: .5, fy: .5}]], .55);
-  return fillZoom(TOWER_KEY[m], ts, z.z * B.z, z.fx, z.z > 1.01 ? z.fy : B.fy);
+  return fillZoom(TOWER_KEY[m], ts, z.z * B.z, z.fx, z.z > 1.01 ? z.fy : B.fy, '', TOWER_RATE);
 }
 function markOf(kind) { const d = X.data[kind]; return Object.fromEntries(Object.keys(d).map(m => [m, {time: d[m][0], tok: d[m][1], cost: d[m][2]}])); }
 
@@ -162,11 +163,12 @@ VIS[306] = (ctx, t, s) => {
 
 // ---------------------------------------------------------------- ⑤ 自反馈学习：文字特写（倾斜页面 + 高亮扫过）
 const RL_IMG = {w: 749, h: 179};
-// 高亮区域（截图像素坐标）：第一行「基于自反馈的强化学习（RL）训练技术」，第二行「3D 建模等方面从零开始构建完整项目的能力」
-const RL_HL = [{ev: 'rl_hl1', box: [280, 66, 556, 90]}, {ev: 'rl_hl2', box: [556, 66, 712, 90]}, {ev: 'rl_hl3', box: [30, 94, 380, 118]}];
+// 高亮：一开始就把「基于自反馈的强化学习（RL）训练技术，提升了在游戏开发、3D 建模等方面从零开始构建完整项目的能力」整句标上
+// 字的实际像素：第一行 y 68–81，第二行 95–108 → 高亮条按字上下居中；扫得慢一些（阿亮反馈）
+const RL_HL = [{at: .55, dur: 1.5, box: [279, 64, 686, 85]}, {at: 2.05, dur: 1.2, box: [33, 91, 337, 112]}];
 VIS[310] = (ctx, t, s) => {
   bgLight(ctx, t);
-  const ui = seg(t, EV.rl_in, EV.rl_in + .8), uo = seg(t, EV.sec4 - .45, EV.sec4);
+  const ui = seg(t, EV.rl_in, EV.rl_in + 1.1), uo = seg(t, EV.sec4 - .45, EV.sec4);
   if (ui > 0 && uo < 1) {
     const sc = 2.05, w = RL_IMG.w * sc, h = RL_IMG.h * sc + 120;
     const c = E.tmp('rl_card', Math.round(w), Math.round(h)), g = c.getContext('2d');
@@ -174,14 +176,14 @@ VIS[310] = (ctx, t, s) => {
     const im = E.img('自反馈学习');
     // 先画高亮（在字下面）
     for (const hl of RL_HL) {
-      const u = seg(t, EV[hl.ev], EV[hl.ev] + .7); if (u <= 0) continue;
+      const u = seg(t, EV.rl_in + hl.at, EV.rl_in + hl.at + hl.dur); if (u <= 0) continue;
       const [x0, y0, x1, y1] = hl.box.map(v => v * sc);
-      g.fillStyle = 'rgba(46,204,212,.55)'; g.fillRect(x0 - 6, 60 + y0 - 2, (x1 - x0 + 12) * eOut(u, 3), y1 - y0 + 6);
+      g.fillStyle = 'rgba(46,204,212,.55)'; g.fillRect(x0 - 6, 60 + y0, (x1 - x0 + 12) * eInOut(u), y1 - y0);
     }
     if (E.ready(im)) { g.globalCompositeOperation = 'multiply'; g.imageSmoothingQuality = 'high'; g.drawImage(im, 0, 60, w, RL_IMG.h * sc); g.globalCompositeOperation = 'source-over'; }
     // 镜头慢推 + 倾斜页面（参考图的拍屏特写）
-    const push = lerp(1, 1.3, eInOut(seg(t, EV.rl_in, EV.sec4)));
-    const k = eOut(ui, 4);
+    const push = lerp(1, 1.18, eInOut(seg(t, EV.rl_in, EV.sec4)));     // 慢推
+    const k = eOut(ui, 3);
     E.persp(ctx, c, c.width, c.height, 1060, 470, {scale: lerp(.8, 1, k) * push * (1 - .1 * uo), ry: lerp(-24, -10, k), rx: lerp(18, 12, k), rz: -3, a: clamp(ui * 2, 0, 1) * (1 - uo), radius: 18, shadowK: .4, n: 14});
   }
   hostMorph(ctx, t, 1);

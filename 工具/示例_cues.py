@@ -109,7 +109,7 @@ SFX = [
     S('stamp', EV['first'], -8), S('sparkle_star', EV['first'] + .05, -13, dur=1.5),
     # ⑤ 自反馈
     S('whoosh_deep', EV['stores_out'] - .1, -12, dur=1.2),
-    S('whoosh_swipe', EV['rl_hl1'], -18), S('whoosh_swipe', EV['rl_hl2'], -19), S('whoosh_swipe', EV['rl_hl3'], -18),
+    S('whoosh_swipe', EV['rl_in'] + .55, -19), S('whoosh_swipe', EV['rl_in'] + 2.05, -20),   # 两行高亮一开始就慢慢扫出
     # ⑥ 海岸
     S('whoosh_swipe', EV['coast_in'] - .1, -13), S('whoosh_swipe', EV['coast_in'] + .4, -14), S('whoosh_swipe', EV['coast_in'] + .9, -14),
     S('whoosh_low', EV['prompt_in'], -13, dur=.9), S('typing', EV['prompt_in'] + .5, -16, dur=1.8),
@@ -138,13 +138,13 @@ SFX = [
     # ⑩ 内心戏
     S('pop', EV['flash_lbl'], -13), S('riser_short', EV['max'] + .55, -14, 'end'), S('ding', EV['max'] + .55, -12),
     S('whoosh_low', EV['think_in'], -13, dur=.9),
-    S('pop', EV['think_run'], -15), S('error', EV['think_find'], -18, dur=.6), S('pop', EV['think_fix'], -15), S('ding', EV['think_out'], -12),
+    S('error', EV['think_find'], -18, dur=.6), S('pop', EV['think_fix'], -15), S('ding', EV['think_out'], -12),
     # ⑪ 接入教程
     S('pop', EV['dsh_ds'], -13), S('whoosh_swipe', EV['dsh_in'] - .2, -14), S('pop', EV['dsh_in'], -10), S('sparkle_star', EV['dsh_all'], -16, dur=1.2),
     S('whoosh_low', EV['la_in'] - .1, -12, dur=.9),
-    *[S('click_double', EV[k] + .45, -14) for k in ['la_1', 'la_2', 'la_3', 'la_4', 'ap_1', 'ap_2', 'ap_3', 'ck_1', 'ck_2', 'cx_codex', 'cx_gpt', 'cx_key', 'cx_test', 'cx_run', 'cx_save', 'cx_back', 'cx_model']],
-    S('click_double', EV['ck_3'] + 1.2, -14), S('typing', EV['ck_3'] + .2, -17, dur=.8), S('typing', EV['cx_paste'] + .3, -18, dur=.5), S('typing', EV['ck_5'] + .1, -18, dur=.5),
-    S('whoosh_low', EV['ap_in'] - .1, -13, dur=.9), S('whoosh_low', EV['ck_1'] - .3, -13, dur=.9), S('whoosh_low', EV['cx_in'], -13, dur=.9),
+    # 教程录屏不加鼠标点击声（阿亮）
+    S('typing', EV['ck_3'] + .2, -17, dur=.8), S('typing', EV['cx_paste'] + .3, -18, dur=.5), S('typing', EV['ck_5'] + .1, -18, dur=.5),
+    S('whoosh_low', EV['ap_in'] - .1, -13, dur=.9), S('whoosh_low', EV['ck_1'] - .3, -13, dur=.9), S('whoosh_low', EV['cx_easy'], -13, dur=.9),
     S('pop', EV['wb'], -12), S('pop', EV['kimi'], -12), S('pop', EV['builtin'], -13),
     # ⑫ 余额
     S('whoosh_low', EV['bal_in'], -13, dur=.9), S('coin', EV['bal_hl'] + .2, -14),

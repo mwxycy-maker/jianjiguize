@@ -29,8 +29,18 @@ for f in ['engine.js', 'common.js', 'preview.js', 'player-ui.js', 'player.js', '
     shutil.copy2(ROOT / f, out / f)
 for f in (ROOT / 'fonts').iterdir(): shutil.copy2(f, out / 'fonts' / f.name)
 for i in imgs: shutil.copy2(ROOT / 'assets' / i, out / 'assets' / i)
+# 视频：大于 4MB 的重新压一遍再放进预览（发布单文件上限 15MB、单次 64MB）；压过的缓存在 .local/preview_cache
+CACHE = ROOT / '.local' / 'preview_cache'; CACHE.mkdir(parents=True, exist_ok=True)
+def small(rel):
+    srcf = ROOT / rel
+    if srcf.stat().st_size <= 4e6: return srcf
+    dst = CACHE / (rel.replace('/', '__'))
+    if not dst.exists() or dst.stat().st_mtime < srcf.stat().st_mtime:
+        subprocess.run(['nice', '-n', '10', 'ffmpeg', '-v', 'error', '-y', '-i', str(srcf), '-an', '-c:v', 'libx264', '-preset', 'medium', '-crf', '28',
+                        '-g', '15', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', str(dst)], check=True)
+    return dst
 for k, rel in src.items():
-    (out / rel).parent.mkdir(parents=True, exist_ok=True); shutil.copy2(ROOT / rel, out / rel)
+    (out / rel).parent.mkdir(parents=True, exist_ok=True); shutil.copy2(small(rel), out / rel)
 subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', str(ROOT / 'mix.wav'), '-t', str(cut), '-af', f'afade=t=out:st={cut - .8:.3f}:d=0.8',
                 '-c:a', 'libmp3lame', '-b:a', '192k', str(out / 'mix.mp3')], check=True)
 # 页面：发布时外层会包 doctype/head/body，这里只写标题、样式与脚本
