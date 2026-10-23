@@ -19,8 +19,9 @@
 | [timeline.py](timeline.py) | 压缩 >0.5 秒停顿、插入停留、校对稿对齐出字幕；提供 `A(句, 词)` 事件锚点 | 被 plan.py 引用；需要本期的 `lines.py` |
 | [beats.py](beats.py) | 歌曲 BPM、强拍、每 0.5 秒响度，用来卡鼓点 | `python3 beats.py 歌.mp3 起 止` |
 | [示例_cues.py](示例_cues.py) | 那期完整的配乐表 + 音效表，照着写本期的 `cues.py` | 参考 |
+| [示例_cues_鹈鹕测试.py](示例_cues_鹈鹕测试.py) | 鹈鹕测试重剪那期的配乐表 + 音效表：一首歌卡两记大鼓、有人声的歌只拼无人声段、梗视频原声不闪避、安静前奏从 drop 进、同一首歌首尾复用 | 参考 |
 | [示例_plan.py](示例_plan.py) | 那期的分镜表：镜头切点、事件锚点（`A(句, 词)`）、素材表、数据水印 | 参考 |
-| [mix.py](mix.py) | 混音：人声 -16、音乐闪避、混响收尾、音效、整片 -14 LUFS | `python3 mix.py` |
+| [mix.py](mix.py) | 混音：人声 -16、音乐闪避、混响收尾、音效、整片 -14 LUFS；配乐表里的相对路径（`音乐/xx.mp3`、`media/xx.mp4`）按工程根目录解析 | `python3 mix.py` |
 | [openverse.py](openverse.py) | 在 Openverse（Freesound）搜音效、下载、登记来源 | `python3 openverse.py search whoosh` / `get 编号 文件名` |
 | [record_html.py](record_html.py) | 把模型生成的 three.js 网页按统一机位逐帧录成视频 | `python3 record_html.py 名字1,名字2 [--probe]` |
 | [示例_record_config.json](示例_record_config.json) | 那期 12 个 HTML 的录制配置（塔、店、游戏按键、海岸） | 参考 |
