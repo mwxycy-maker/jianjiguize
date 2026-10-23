@@ -173,7 +173,7 @@ VIS[1202] = (ctx, t, s) => {
   const cr = [lerp(0, 300, zk), lerp(0, 30, zk), lerp(851, 500, zk), lerp(778 * .62, 500 * h / (w - 46) * (851 / 851) * .56, zk)];
   cr[3] = cr[2] * h / (w - 46);
   const M = windowCard(ctx, {t, key: 'fix', cx: 1040, cy: 470, w, h: h + 46, a: EV.fix_in, flat: true,
-    content: (g, x, y, ww, hh) => { g.fillStyle = '#fff'; g.fillRect(x, y, ww, hh); const im = E.img('修复dsh'); if (E.ready(im)) g.drawImage(im, cr[0], cr[1], cr[2], cr[3], x, y, ww, hh); }});
+    content: (g, x, y, ww, hh) => { g.fillStyle = '#fff'; g.fillRect(x, y, ww, hh); const im = E.img('修复dsh'); if (E.ready(im)) { const k = E.sizeOf(im)[0] / 851; g.drawImage(im, cr[0] * k, cr[1] * k, cr[2] * k, cr[3] * k, x, y, ww, hh); } }});   // 高清重排图：坐标仍按原图 851 宽，按倍率换算
   windowCard(ctx, {t, key: 'bal', cx: 1040, cy: 480, w: 1420, h: Math.round(1420 * 1240 / 1838 * .62) + 46, b: s.start - .05, dOut: .4, flat: true,
     content: (g, x, y, ww, hh) => { const im = E.img('余额'); if (E.ready(im)) g.drawImage(im, 0, 0, 1838, 1240 * .62, x, y, ww, hh); }});
   if (M) {
@@ -241,17 +241,62 @@ VIS[1304] = (ctx, t, s) => {
   const apps = ['某音', '某书', '某宝', '某团'], xs = [250, 560, 1360, 1670];
   apps.forEach((a, i) => {
     const ui = seg(t, EV.apps + i * .28, EV.apps + i * .28 + .35); if (ui <= 0) return;
-    const sc = backOut(ui, 2);
-    ctx.save(); ctx.translate(xs[i], 320); ctx.scale(sc, sc);
-    rr(ctx, -130, -70, 260, 140, 36); ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.fill();
-    ctx.font = '72px Black'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#15171c'; ctx.fillText(a, 0, 4);
-    const x = seg(t, EV.apps_x + i * .12, EV.apps_x + i * .12 + .25);
-    if (x > 0) { ctx.lineWidth = 16; ctx.lineCap = 'round'; ctx.strokeStyle = '#ff3b3b';
-      ctx.beginPath(); ctx.moveTo(-90, -50); ctx.lineTo(lerp(-90, 90, eOut(x)), lerp(-50, 50, eOut(x))); ctx.stroke();
-      if (x > .5) { const y2 = seg(x, .5, 1); ctx.beginPath(); ctx.moveTo(90, -50); ctx.lineTo(lerp(90, -90, y2), lerp(-50, 50, y2)); ctx.stroke(); } }
-    ctx.restore();
+    // 「拿不到」：不用红叉（阿亮）→ 轻抖一下、褪成灰色、裂纹划开、顺着裂纹错开下沉、掉几粒碎屑
+    const k = seg(t, EV.apps_x + i * .12, EV.apps_x + i * .12 + .7);
+    brokenPill(ctx, a, xs[i], 320, backOut(ui, 2), k, t, i);
   });
 };
+// 失效胶囊：k 0 → 1（0–0.3 抖动 + 变灰；0.12–0.45 裂纹从上往下划开；0.45–1 两半错开下沉、碎屑掉落）
+const CRACK = [[-8, -72], [10, -38], [-7, -10], [12, 18], [-3, 44], [6, 72]];
+function brokenPill(ctx, text, x, y, sc, k, t, seed) {
+  const W2 = 130, H2 = 70, PAD = 24;
+  const c = E.tmp('pill_' + seed, 2 * (W2 + PAD), 2 * (H2 + PAD)), g = c.getContext('2d');
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, c.width, c.height); g.translate(W2 + PAD, H2 + PAD);
+  const gray = eOut(seg(k, 0, .35), 2);
+  const mix = (a, b) => a.map((v, j) => Math.round(lerp(v, b[j], gray)));
+  rr(g, -W2, -H2, 2 * W2, 2 * H2, 36); g.fillStyle = E.rgb(mix([255, 255, 255], [200, 203, 209]), 1, .97); g.fill();
+  g.font = '72px Black'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = E.rgb(mix([21, 23, 28], [120, 125, 134])); g.fillText(text, 0, 4);
+  // 裂纹：按长度逐段画出来；深色主缝 + 一侧浅色高光，再加两条小分叉
+  const cr = seg(k, .12, .45);
+  if (cr > 0) {
+    const segs = CRACK.length - 1, upto = cr * segs;
+    g.save(); g.lineJoin = 'round'; g.lineCap = 'round';
+    for (const [col, lw, dx] of [['rgba(255,255,255,.85)', 3, 2], ['#4b5059', 4, 0]]) {
+      g.beginPath(); g.moveTo(CRACK[0][0] + dx, CRACK[0][1]);
+      for (let j = 1; j <= Math.ceil(upto); j++) {
+        const f = Math.min(1, upto - (j - 1)), [px, py] = CRACK[j - 1], [qx, qy] = CRACK[j];
+        g.lineTo(lerp(px, qx, f) + dx, lerp(py, qy, f));
+      }
+      g.strokeStyle = col; g.lineWidth = lw; g.stroke();
+    }
+    if (upto > 2) { g.beginPath(); g.moveTo(-7, -10); g.lineTo(-7 - 26 * Math.min(1, upto - 2), -22); g.strokeStyle = '#4b5059'; g.lineWidth = 2.5; g.stroke(); }
+    if (upto > 3.5) { g.beginPath(); g.moveTo(12, 18); g.lineTo(12 + 30 * Math.min(1, (upto - 3.5) / 1.5), 30); g.stroke(); }
+    g.restore();
+  }
+  // 抖动（只在最开始）
+  const sh = (1 - seg(k, 0, .3)) * (k > 0 ? 1 : 0), dx = Math.sin(t * 70 + seed) * 7 * sh;
+  const sp = eOut(seg(k, .45, 1), 3);
+  ctx.save(); ctx.translate(x + dx, y); ctx.scale(sc, sc); ctx.globalAlpha *= 1 - .08 * gray;
+  const half = (side) => {
+    ctx.save();
+    ctx.translate(side * 7 * sp, (side < 0 ? 3 : 9) * sp); ctx.rotate(side * .045 * sp);
+    ctx.beginPath(); ctx.moveTo(side * (W2 + PAD), -H2 - PAD);
+    for (const [px, py] of CRACK) ctx.lineTo(px, py);
+    ctx.lineTo(CRACK[CRACK.length - 1][0], H2 + PAD); ctx.lineTo(side * (W2 + PAD), H2 + PAD); ctx.closePath(); ctx.clip();
+    ctx.drawImage(c, -W2 - PAD, -H2 - PAD); ctx.restore();
+  };
+  if (sp <= 0) ctx.drawImage(c, -W2 - PAD, -H2 - PAD); else { half(-1); half(1); }
+  // 碎屑：从裂缝处掉下几粒
+  if (sp > 0) {
+    const r = E.rng(seed * 7 + 3);
+    for (let j = 0; j < 4; j++) {
+      const [px, py] = CRACK[1 + j], vx = (r() - .5) * 40, sz = 4 + r() * 5;
+      ctx.save(); ctx.globalAlpha *= 1 - sp; ctx.translate(px + vx * sp, py + 160 * sp * sp + 20 * sp); ctx.rotate(r() * 3 + sp * 4);
+      ctx.fillStyle = '#9aa0aa'; ctx.beginPath(); ctx.moveTo(-sz, -sz * .6); ctx.lineTo(sz, -sz * .3); ctx.lineTo(0, sz); ctx.closePath(); ctx.fill(); ctx.restore();
+    }
+  }
+  ctx.restore();
+}
 // 优缺点：不推荐 → 搜得快、没广告
 VIS[1305] = (ctx, t, s) => {
   aroll(ctx, t);
