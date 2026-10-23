@@ -71,9 +71,9 @@ def main():
     music = np.zeros((N, 2), np.float32)
     for m in cues.MUSIC:
         d = m['until'] - m['at']
-        x = load(m['file'], m['src'], d + .05)[:int(d * SR)]
+        x = load(str(ROOT / m['file']), m['src'], d + .05)[:int(d * SR)]
         if not len(x): continue
-        ref = lufs(load(m['file'], m.get('ref_ss', m['src']), m.get('ref_dur', 20)))
+        ref = lufs(load(str(ROOT / m['file']), m.get('ref_ss', m['src']), m.get('ref_dur', 20)))
         x *= 10 ** ((m.get('level', -18) - ref) / 20)
         fi, fo = int(m.get('fade_in', .03) * SR), int(m.get('fade_out', .25) * SR)
         if fi: x[:fi] *= ramp(min(fi, len(x)), 0, 1)
