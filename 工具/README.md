@@ -25,6 +25,7 @@
 | [openverse.py](openverse.py) | 在 Openverse（Freesound）搜音效、下载、登记来源 | `python3 openverse.py search whoosh` / `get 编号 文件名` |
 | [record_html.py](record_html.py) | 把模型生成的 three.js 网页按统一机位逐帧录成视频 | `python3 record_html.py 名字1,名字2 [--probe]` |
 | [示例_record_config.json](示例_record_config.json) | 那期 12 个 HTML 的录制配置（塔、店、游戏按键、海岸） | 参考 |
+| [fixblack.py](fixblack.py) | 把录像里偶发的整帧黑帧换成前后帧平均（帧数、时长不变） | `python3 fixblack.py 输入.mp4 输出.mp4` |
 | [matte.py](matte.py) | 人物抠像（Robust Video Matting），输出原画 \| 遮罩并排视频 | `python3 matte.py 源起 源止 输出名` |
 | [make_fonts.py](make_fonts.py) | 按本期用到的字做字体子集 | `python3 make_fonts.py` |
 | [stills.py](stills.py) | 打开网页预览，按时间截几张静帧拼成一张图，自查用 | `python3 stills.py 输出.jpg 12.5 30 61.2 --cols 3` |

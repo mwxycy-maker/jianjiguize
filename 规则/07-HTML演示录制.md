@@ -43,6 +43,7 @@
   ```
   不要用 `css` 配置去隐藏（`display:none` 或 `visibility:hidden`）：实测预跑 5 秒后第一次截图会卡死超时。
 - 录之前先截第一帧看一眼有没有多余的界面元素，比录完再返工省时间。
+- **录完逐帧扫一遍亮度**，找突然变黑的帧：`ffmpeg -i x.mp4 -vf "signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=-" -f null -`。录制脚本已经会自动重截黑帧。
 
 ## 速度参考（云端软件渲染）
 

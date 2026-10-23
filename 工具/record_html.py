@@ -174,10 +174,20 @@ async def run(name, probe=False):
             await b.close(); return
         n = int(round(dur * fps))
         t1 = time.time()
+        from PIL import Image, ImageStat
+        lum = lambda f: ImageStat.Stat(Image.open(f).convert('L')).mean[0]
+        prev = None
         for k in range(n):
             await do_actions(pre + k / fps)
             await tick(pre_steps + k + 1)
-            await pg.screenshot(path=str(fdir / f'{k:05d}.jpg'), type='jpeg', quality=92)
+            fp = str(fdir / f'{k:05d}.jpg')
+            await pg.screenshot(path=fp, type='jpeg', quality=92)
+            # 偶发：截图时画布还没画完，得到整帧黑帧（海岸录像出现过）→ 亮度突然掉到很低就重截
+            m = lum(fp)
+            for _ in range(4):
+                if prev is None or not (m < 35 and prev - m > 40): break
+                await pg.wait_for_timeout(60); await pg.screenshot(path=fp, type='jpeg', quality=92); m = lum(fp)
+            prev = m
             if k % 60 == 0:
                 print(f'  {name} frame {k}/{n}  {(time.time()-t1)/(k+1):.2f}s/f', flush=True)
         await b.close()
